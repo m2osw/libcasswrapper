@@ -51,6 +51,7 @@ set( HEADER_FILES
     batch.h
     exception.h
     query.h
+    query_model.h
     schema.h
     schema_value.h
     session.h
@@ -68,6 +69,7 @@ add_library( ${PROJECT_NAME} SHARED
     exception_impl.cpp
     not_used.h
     query.cpp
+    query_model.cpp
     schema.cpp
     schema_value.cpp
     session.cpp
