@@ -43,6 +43,7 @@ set( CMAKE_AUTOMOC             TRUE )
 
 ## Include support modules
 ##
+find_package( As2Js              REQUIRED )
 find_package( CassandraCppDriver REQUIRED )
 find_package( CassValue          REQUIRED )
 find_package( LibExcept          REQUIRED )
