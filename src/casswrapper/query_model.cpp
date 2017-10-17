@@ -152,7 +152,6 @@ void query_model::onQueryFinished( Query::pointer_t q )
 {
     try
     {
-        q->getQueryResult();
         while( q->nextRow() )
         {
             const QByteArray key( q->getByteArrayColumn(0) );

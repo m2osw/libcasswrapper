@@ -593,6 +593,7 @@ column_type_t ColumnMeta::getValueType( int const cass_type )
     case CASS_VALUE_TYPE_UUID       :   ct = column_type_t::TypeUuid       ; break;
     case CASS_VALUE_TYPE_TIMEUUID   :   ct = column_type_t::TypeTimeuuid   ; break;
     case CASS_VALUE_TYPE_INET       :   ct = column_type_t::TypeInet       ; break;
+    default                         :   ct = column_type_t::TypeUnknown    ;
     }
     return ct;
 }
