@@ -1,6 +1,7 @@
 libcasswrapper (1.1.1.0~xenial) xenial; urgency=high
 
   * Fixed the removal of queries that were worked on.
+  * Bumped copyright notice to 2018.
 
  -- Alexis Wilke <alexis@m2osw.com>  Thu, 28 Jan 2016 03:43:28 -0700
 
