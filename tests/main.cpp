@@ -81,7 +81,7 @@ int main( int argc, char *argv[] )
 #endif
     }
 #if 0
-    catch( const std::exception& ex )
+    catch( std::exception const & ex )
     {
         std::cerr << "Exception caught! what=[" << ex.what() << "]" << std::endl;
         return 1;

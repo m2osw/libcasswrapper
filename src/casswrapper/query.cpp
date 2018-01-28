@@ -1,6 +1,6 @@
 /*
  * Text:
- *      src/query.cpp
+ *      src/casswrapper/query.cpp
  *
  * Description:
  *      Handling of the CQL interface.
@@ -1105,24 +1105,36 @@ void Query::addToPendingList()
 void Query::removeFromPendingList()
 {
     lock_t locker(f_mutex);
+
     //
     // Remove this pointer from the list
     //
-    std::vector<pointer_list_t::iterator> iter_list;
-    for( auto iter = f_pendingQueryList.begin();
-         iter != f_pendingQueryList.end();
-         ++iter )
-    {
-        if( iter->get() == this )
-        {
-            iter_list.push_back(iter);
-        }
-    }
-    //
-    for( auto iter : iter_list )
-    {
-        f_pendingQueryList.erase(iter);
-    }
+    f_pendingQueryList.erase(
+            std::remove_if(
+                      f_pendingQueryList.begin()
+                    , f_pendingQueryList.end()
+                    , [&](auto const & iter)
+                      {
+                          return iter.get() == this;
+                      }
+                    )
+              , f_pendingQueryList.end());
+
+    //std::vector<pointer_list_t::iterator> iter_list;
+    //for( auto iter = f_pendingQueryList.begin();
+    //     iter != f_pendingQueryList.end();
+    //     ++iter )
+    //{
+    //    if( iter->get() == this )
+    //    {
+    //        iter_list.push_back(iter);
+    //    }
+    //}
+    ////
+    //for( auto iter : iter_list )
+    //{
+    //    f_pendingQueryList.erase(iter);
+    //}
 }
 
 

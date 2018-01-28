@@ -1,20 +1,14 @@
-libcasswrapper (1.1.0.4~xenial) xenial; urgency=high
+libcasswrapper (1.1.1.0~xenial) xenial; urgency=high
 
-  * Nightly build.
+  * Fixed the removal of queries that were worked on.
 
- -- R. Douglas Barbieri <doug@dooglio.net>  Tue, 24 Oct 2017 20:54:53 -0700
+ -- Alexis Wilke <alexis@m2osw.com>  Thu, 28 Jan 2016 03:43:28 -0700
 
 libcasswrapper (1.1.0.2~xenial) xenial; urgency=high
 
   * Added qt5 QSql support for Cassandra.
 
  -- R. Douglas Barbieri <doug@dooglio.net>  Sun, 08 Oct 2017 16:34:56 -0700
-
-libcasswrapper (1.0.5.248~xenial) xenial; urgency=high
-
-  * Nightly build.
-
- -- Build Server <build@m2osw.com>  Sat, 21 Jan 2017 17:55:06 -0800
 
 libcasswrapper (1.0.5.0~xenial) xenial; urgency=high
 
@@ -35,12 +29,6 @@ libcasswrapper (1.0.3.0~xenial) xenial; urgency=high
   * SNAP-258: Added stacktracing ability to exception base.
 
  -- R. Douglas Barbieri <doug@dooglio.net>  Sun, 11 Dec 2016 10:52:15 -0800
-
-libcasswrapper (1.0.2.25~xenial) xenial; urgency=high
-
-  * Nightly build.
-
- -- Build Server <build@m2osw.com>  Fri, 18 Nov 2016 02:00:48 -0800
 
 libcasswrapper (1.0.2.0~xenial) xenial; urgency=high
 
