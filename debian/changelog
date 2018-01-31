@@ -1,9 +1,15 @@
+libcasswrapper (1.1.2.0~xenial) xenial; urgency=high
+
+  * Added support for uint32 and uint64. uint64 is actually used in snaplayout,
+
+ -- Alexis Wilke <alexis@m2osw.com>  Wed, 31 Jan 2018 02:37:36 -0700
+
 libcasswrapper (1.1.1.0~xenial) xenial; urgency=high
 
   * Fixed the removal of queries that were worked on.
   * Bumped copyright notice to 2018.
 
- -- Alexis Wilke <alexis@m2osw.com>  Thu, 28 Jan 2016 03:43:28 -0700
+ -- Alexis Wilke <alexis@m2osw.com>  Thu, 28 Jan 2018 03:43:28 -0700
 
 libcasswrapper (1.1.0.2~xenial) xenial; urgency=high
 

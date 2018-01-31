@@ -413,7 +413,9 @@ void Query::bindVariant( const size_t id, const QVariant& value )
     switch( value.type() )
     {
     case QVariant::Bool:      f_data->f_queryStmt->bind_bool   ( id, value.toBool()      ); break;
+    case QVariant::UInt:      f_data->f_queryStmt->bind_uint32 ( id, value.toUInt()      ); break;
     case QVariant::Int:       f_data->f_queryStmt->bind_int32  ( id, value.toInt()       ); break;
+    case QVariant::ULongLong: // there is no bind uint64 so we use bind_int64
     case QVariant::LongLong:  f_data->f_queryStmt->bind_int64  ( id, value.toLongLong()  ); break;
     case QVariant::Double:    f_data->f_queryStmt->bind_double ( id, value.toDouble()    ); break;
     case QVariant::String:    f_data->f_queryStmt->bind_string ( id, value.toString()    ); break;
@@ -429,7 +431,9 @@ void Query::bindVariant( const QString& id, const QVariant& value )
     switch( value.type() )
     {
     case QVariant::Bool:      f_data->f_queryStmt->bind_bool   ( id, value.toBool()      ); break;
+    case QVariant::UInt:      f_data->f_queryStmt->bind_uint32 ( id, value.toUInt()      ); break;
     case QVariant::Int:       f_data->f_queryStmt->bind_int32  ( id, value.toInt()       ); break;
+    case QVariant::ULongLong: // there is no bind uint64 so we use bind_int64
     case QVariant::LongLong:  f_data->f_queryStmt->bind_int64  ( id, value.toLongLong()  ); break;
     case QVariant::Double:    f_data->f_queryStmt->bind_double ( id, value.toDouble()    ); break;
     case QVariant::String:    f_data->f_queryStmt->bind_string ( id, value.toString()    ); break;

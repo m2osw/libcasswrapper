@@ -437,6 +437,8 @@ public:
     void bind_bool       ( const QString& id, const bool         value ) const;
     void bind_int32      ( const size_t   id, const int32_t      value ) const;
     void bind_int32      ( const QString& id, const int32_t      value ) const;
+    void bind_uint32     ( const size_t   id, const uint32_t     value ) const;
+    void bind_uint32     ( const QString& id, const uint32_t     value ) const;
     void bind_int64      ( const size_t   id, const int64_t      value ) const;
     void bind_int64      ( const QString& id, const int64_t      value ) const;
     void bind_float      ( const size_t   id, const float        value ) const;

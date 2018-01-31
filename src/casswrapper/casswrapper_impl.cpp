@@ -876,6 +876,18 @@ void statement::bind_int32( const QString& id, const int32_t value ) const
 }
 
 
+void statement::bind_uint32( const size_t id, const uint32_t value ) const
+{
+   cass_statement_bind_uint32( f_ptr.get(), id, value );
+}
+
+
+void statement::bind_uint32( const QString& id, const uint32_t value ) const
+{
+   cass_statement_bind_uint32_by_name( f_ptr.get(), id.toUtf8().data(), value );
+}
+
+
 void statement::bind_int64( const size_t id, const int64_t value ) const
 {
    cass_statement_bind_int64( f_ptr.get(), id, value );
