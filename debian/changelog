@@ -1,3 +1,9 @@
+libcasswrapper (1.1.2.1~xenial) xenial; urgency=high
+
+  * Fixed the protocol to the snapwebsites.org.
+
+ -- Alexis Wilke <alexis@m2osw.com>  Thu,  8 Feb 2018 00:54:04 -0700
+
 libcasswrapper (1.1.2.0~xenial) xenial; urgency=high
 
   * Added support for uint32 and uint64. uint64 is actually used in snaplayout,
