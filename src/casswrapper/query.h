@@ -60,10 +60,21 @@ class value;
 class QueryCallback
 {
 public:
-    virtual void  threadFinished() = 0;
+    virtual         ~QueryCallback() {}
+
+    virtual void    threadFinished() = 0;
 };
 
 
+// this class has two problems with -Weffc++:
+//   1. the std::enable_shared_from_this<>() which does not have a virtual
+//      destructor (as expected)
+//   2. the 'data' structure is not defined and std::unique_ptr<>() can't
+//      do sizeof(data) as a consequence
+//
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Weffc++"
+#pragma GCC diagnostic ignored "-Wnon-virtual-dtor"
 class Query
     : public QObject
     , public std::enable_shared_from_this<Query>
@@ -87,7 +98,7 @@ public:
     typedef std::shared_ptr<Query>              pointer_t;
     typedef std::map<std::string,std::string>   string_map_t;
 
-    ~Query();
+    virtual             ~Query() override;
 
     static pointer_t    create( Session::pointer_t session );
 
@@ -99,11 +110,11 @@ public:
     const QString&      description         () const;
     void                setDescription      ( const QString& val );
 
-    consistency_level_t	consistencyLevel    () const;
+    consistency_level_t consistencyLevel    () const;
     void                setConsistencyLevel ( consistency_level_t level );
 
-    int64_t				timestamp           () const;
-    void				setTimestamp        ( int64_t val );
+    int64_t             timestamp           () const;
+    void                setTimestamp        ( int64_t val );
 
     void                query               ( const QString& query_string, const int bind_count = -1 );
     int                 getBindCount        () const;
@@ -120,8 +131,8 @@ public:
     void                bindMap             ( const QString& id, const string_map_t& value );
 
     void                start               ( const bool block = true );
-    bool	            isReady             () const;
-    bool				queryActive		    () const;
+    bool                isReady             () const;
+    bool                queryActive         () const;
     size_t              rowCount            () const;
     size_t              columnCount         () const;
     QString             columnName          ( size_t const index );
@@ -145,27 +156,17 @@ signals:
     void                queryFinished       ( pointer_t q );
 
 private:
-    Query( Session::pointer_t session );
-
-    // Current query
-    //
-    Session::pointer_t           f_session;
-    QString                      f_description;
-    QString                      f_queryString;
-    //
-    std::unique_ptr<data>        f_data;
-    //
-    consistency_level_t          f_consistencyLevel = consistency_level_t::level_default;
-    int64_t                      f_timestamp        = 0;
-    int64_t                      f_timeout          = 0;
-    int                          f_pagingSize       = -1;
-    int                          f_bindCount        = -1;
-
     friend class Batch;
 
+    typedef std::vector<pointer_t>                  pointer_list_t;
+    typedef std::lock_guard<std::recursive_mutex>   lock_t;
+    typedef std::vector<QueryCallback*>             callback_list_t;
+
+                        Query( Session::pointer_t session );
+
     void                addToBatch              ( batch* batch_ptr );
-    void 		        setStatementConsistency ();
-    void 		        setStatementTimestamp   ();
+    void                setStatementConsistency ();
+    void                setStatementTimestamp   ();
     void                throwIfError            ( const QString& msg );
     void                internalStart           ( const bool block, batch* batch_ptr = nullptr );
 
@@ -173,21 +174,32 @@ private:
     casswrapper::value  getColumnValue          ( const size_t   id ) const;
     casswrapper::value  getColumnValue          ( const QString& id ) const;
 
+    static void         queryCallbackFunc       ( void* future, void *data );
+    void                addToPendingList        ();
+    void                removeFromPendingList   ();
+    void                threadQueryFinished     ();
+
+    // Current query
+    //
+    Session::pointer_t           f_session          = Session::pointer_t();
+    QString                      f_description      = QString();
+    QString                      f_queryString      = QString();
+    //
+    std::unique_ptr<data>        f_data;  // = std::unique_ptr<data>(); -- data is an incomplete type at this point
+    //
+    consistency_level_t          f_consistencyLevel = consistency_level_t::level_default;
+    int64_t                      f_timestamp        = 0;
+    int64_t                      f_timeout          = 0;
+    int                          f_pagingSize       = -1;
+    int                          f_bindCount        = -1;
+
     // Background thread management
     //
-    typedef std::vector<pointer_t>                  pointer_list_t;
-    typedef std::lock_guard<std::recursive_mutex>   lock_t;
-    typedef std::vector<QueryCallback*>             callback_list_t;
-    //
-    static pointer_list_t               f_pendingQueryList;
-    static std::recursive_mutex         f_mutex;
-    callback_list_t                     f_callbackList;
-
-    static void         queryCallbackFunc( void* future, void *data );
-    void                addToPendingList();
-    void                removeFromPendingList();
-    void                threadQueryFinished();
+    static pointer_list_t        f_pendingQueryList;
+    static std::recursive_mutex  f_mutex;
+    callback_list_t              f_callbackList     = callback_list_t();
 };
+#pragma GCC diagnostic pop
 
 
 }

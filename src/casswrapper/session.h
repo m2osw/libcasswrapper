@@ -59,8 +59,11 @@ class future;
 class session;
 
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Weffc++"
+#pragma GCC diagnostic ignored "-Wnon-virtual-dtor"
 class Session
-        : public std::enable_shared_from_this<Session>
+    : public std::enable_shared_from_this<Session>
 {
 public:
     typedef std::shared_ptr<Session> pointer_t;
@@ -104,8 +107,9 @@ private:
     timeout_t f_timeout         = DEFAULT_TIMEOUT;                         // 12s
     uint32_t  f_high_water_mark = 65536;
     uint32_t  f_low_water_mark  = 0;
-    QString   f_keys_path       = "/var/lib/snapwebsites/cassandra-keys/";
+    QString   f_keys_path       = QString("/var/lib/snapwebsites/cassandra-keys/");
 };
+#pragma GCC diagnostic pop
 
 
 class request_timeout
@@ -125,8 +129,8 @@ public:
     }
 
 private:
-    Session::pointer_t    f_session;
-    timeout_t             f_old_timeout;
+    Session::pointer_t    f_session     = Session::pointer_t();
+    timeout_t             f_old_timeout = Session::DEFAULT_TIMEOUT;
 };
 
 

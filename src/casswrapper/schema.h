@@ -114,13 +114,13 @@ public:
 
     void                            encodeColumnMeta(cassvalue::Encoder& encoded) const;
 
-    QString     					getCqlString() const;
+    QString                         getCqlString() const;
 
     static column_type_t            getValueType( int const cass_type );
 
 private:
-    QString                         f_name;
-    Value::map_t                    f_fields;
+    QString                         f_name       = QString();
+    Value::map_t                    f_fields     = Value::map_t();
     type_t                          f_type       = type_t::TypeRegular;
     column_type_t                   f_columnType = column_type_t::TypeUnknown;
 
@@ -148,12 +148,12 @@ public:
 
     void                            encodeTableMeta(cassvalue::Encoder& encoded) const;
 
-    QString      					getCqlString( QString const& keyspace_name ) const;
+    QString                         getCqlString( QString const& keyspace_name ) const;
 
 private:
-    QString                         f_name;
-    Value::map_t                    f_fields;
-    ColumnMeta::map_t               f_columns;
+    QString                         f_name    = QString();
+    Value::map_t                    f_fields  = Value::map_t();
+    ColumnMeta::map_t               f_columns = ColumnMeta::map_t();
 
     void                            decodeTableMeta(const cassvalue::Decoder& decoder);
 };
@@ -180,13 +180,13 @@ public:
 
     void                            encodeKeyspaceMeta(cassvalue::Encoder& encoded) const;
 
-    QString							getKeyspaceCql() const;
-    string_map_t					getTablesCql() const;
+    QString                         getKeyspaceCql() const;
+    string_map_t                    getTablesCql() const;
 
 private:
-    QString                         f_name;
-    Value::map_t                    f_fields;
-    TableMeta::map_t                f_tables;
+    QString                         f_name   = QString();
+    Value::map_t                    f_fields = Value::map_t();
+    TableMeta::map_t                f_tables = TableMeta::map_t();
 
     void                            decodeKeyspaceMeta(const cassvalue::Decoder& decoder);
 };
@@ -211,8 +211,8 @@ public:
     void                            decodeSessionMeta(const QByteArray& encoded);
 
 private:
-    Session::pointer_t              f_session;
-    KeyspaceMeta::map_t             f_keyspaces;
+    Session::pointer_t              f_session   = Session::pointer_t();
+    KeyspaceMeta::map_t             f_keyspaces = KeyspaceMeta::map_t();
 };
 
 

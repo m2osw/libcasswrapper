@@ -45,26 +45,33 @@ namespace casswrapper
 class Query;
 class batch;
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Weffc++"
+#pragma GCC diagnostic ignored "-Wnon-virtual-dtor"
 class Batch
     : public std::enable_shared_from_this<Batch>
 {
 public:
     typedef std::shared_ptr<Batch>  pointer_t;
 
-    void clear();
-    bool isActive() const;
-    void addQuery( std::shared_ptr<Query> query );
-    void run( bool const block = true );
+    void            clear();
+    bool            isActive() const;
+    void            addQuery( std::shared_ptr<Query> query );
+    void            run( bool const block = true );
 
 protected:
-    Batch();
     friend class Query;
-    std::unique_ptr<batch>              f_batch;
-    std::vector<std::shared_ptr<Query>> f_queryList;
+
+                    Batch();
+
+    std::unique_ptr<batch>              f_batch;  // = std::unique_ptr<batch>(); -- batch is not yet defined
+    std::vector<std::shared_ptr<Query>> f_queryList = std::vector<std::shared_ptr<Query>>();
 };
+#pragma GCC diagnostic pop
 
 
-class LoggedBatch : public Batch
+class LoggedBatch
+    : public Batch
 {
 public:
     LoggedBatch();
@@ -73,7 +80,8 @@ public:
 };
 
 
-class UnloggedBatch : public Batch
+class UnloggedBatch
+    : public Batch
 {
 public:
     UnloggedBatch();
@@ -82,7 +90,8 @@ public:
 };
 
 
-class CounterBatch : public Batch
+class CounterBatch
+    : public Batch
 {
 public:
     CounterBatch();

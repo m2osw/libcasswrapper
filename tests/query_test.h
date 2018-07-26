@@ -42,29 +42,28 @@
 class query_test
 {
 public:
-    query_test();
-    ~query_test();
+                                    query_test();
+                                    ~query_test();
 
-    void describeSchema();
+    void                            describeSchema();
 
-    void createSchema();
-    void dropSchema();
+    void                            createSchema();
+    void                            dropSchema();
 
-    void simpleInsert();
-    void simpleSelect();
+    void                            simpleInsert();
+    void                            simpleSelect();
 
-    void batchTest();
+    void                            batchTest();
 
-    void largeTableTest();
+    void                            largeTableTest();
 
-    void qtSqlDriverTest();
+    void                            qtSqlDriverTest();
 
-    static void set_host( QString const& host );
-    static QString get_host();
+    static void                     set_host( QString const& host );
+    static QString                  get_host();
 
 private:
-    casswrapper::Session::pointer_t f_session;
-    static QString f_host;
+    casswrapper::Session::pointer_t f_session = casswrapper::Session::pointer_t();
 };
 
 // vim: ts=4 sw=4 et

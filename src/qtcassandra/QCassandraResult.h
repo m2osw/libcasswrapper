@@ -55,19 +55,13 @@ signals:
     void            queryPageFinished();
 
 private:
-    casswrapper::Query::pointer_t                f_query;
-    int                                          f_totalCount = 0;
-    int                                          f_pagingSize = -1;
-
     typedef std::vector<std::vector<QVariant>> row_array_t;
-    row_array_t      f_rows;
 
     struct column_t
     {
-        QString                            f_name;
-        casswrapper::schema::column_type_t f_type;
+        QString                            f_name = QString();
+        casswrapper::schema::column_type_t f_type = casswrapper::schema::column_type_t();
     };
-    std::vector<column_t> f_orderedColumns;
 
     void            createQuery();
     int             totalCount() const;
@@ -75,6 +69,12 @@ private:
     void            pushRow( std::vector<QVariant> const& columns );
     bool            getNextRow();
     QVariant        atRow( int const field );
+
+    casswrapper::Query::pointer_t       f_query = casswrapper::Query::pointer_t();
+    int                                 f_totalCount = 0;
+    int                                 f_pagingSize = -1;
+    row_array_t                         f_rows = row_array_t();
+    std::vector<column_t>               f_orderedColumns = std::vector<column_t>();
 };
 
 QT_END_NAMESPACE

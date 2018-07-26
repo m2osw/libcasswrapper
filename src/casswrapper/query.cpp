@@ -126,10 +126,10 @@ namespace
 
 struct data
 {
-    std::unique_ptr<future>      f_sessionFuture;
-    std::unique_ptr<iterator>    f_rowsIterator;
-    std::unique_ptr<result>      f_queryResult;
-    std::unique_ptr<statement>   f_queryStmt;
+    std::unique_ptr<future>      f_sessionFuture = std::unique_ptr<future>();
+    std::unique_ptr<iterator>    f_rowsIterator  = std::unique_ptr<iterator>();
+    std::unique_ptr<result>      f_queryResult   = std::unique_ptr<result>();
+    std::unique_ptr<statement>   f_queryStmt     = std::unique_ptr<statement>();
 };
 
 

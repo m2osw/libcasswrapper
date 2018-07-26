@@ -48,7 +48,9 @@ namespace casswrapper
 {
 
 
-class cassandra_exception_t : public std::exception, public libexcept::exception_base_t
+class cassandra_exception_t
+    : public std::exception
+    , public libexcept::exception_base_t
 {
 public:
     virtual uint32_t        getCode()    const = 0;
@@ -56,7 +58,7 @@ public:
     virtual QString const&  getErrMsg()  const = 0;
     virtual QString const&  getMessage() const = 0;
 
-    virtual const char*     what() const throw() = 0;
+    virtual const char *    what() const throw() = 0;
 };
 
 

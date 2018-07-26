@@ -8,9 +8,9 @@
 #include <casswrapper/session.h>
 
 #ifdef QT_PLUGIN
-#	define Q_EXPORT_SQLDRIVER_CASSANDRA
+#define Q_EXPORT_SQLDRIVER_CASSANDRA
 #else
-#	define Q_EXPORT_SQLDRIVER_CASSANDRA Q_SQL_EXPORT
+#define Q_EXPORT_SQLDRIVER_CASSANDRA Q_SQL_EXPORT
 #endif
 
 QT_BEGIN_NAMESPACE
@@ -40,9 +40,9 @@ public:
 
     QVariant handle() const      override;
 
-    QSqlResult *	createResult()                      const override;
-    QStringList 	tables(QSql::TableType)             const override;
-    QSqlRecord 		record(const QString& tablename)    const override;
+    QSqlResult *    createResult()                      const override;
+    QStringList     tables(QSql::TableType)             const override;
+    QSqlRecord      record(const QString& tablename)    const override;
     bool            isOpen()                            const override;
 
     bool            beginTransaction()    override;
@@ -54,17 +54,17 @@ public:
     static QVariant::Type decodeColumnType( casswrapper::schema::column_type_t type );
 
     // TODO: do we actually need these?
-    //QSqlIndex 		primaryIndex(const QString& tablename) const override;
-    //QString 		formatValue(const QSqlField &field, bool trimStrings) const override;
-    //QString			escapeIdentifier(const QString &identifier, IdentifierType type) const override;
-    //bool			isIdentifierEscaped(const QString &identifier, IdentifierType type) const override;
+    //QSqlIndex       primaryIndex(const QString& tablename) const override;
+    //QString         formatValue(const QSqlField &field, bool trimStrings) const override;
+    //QString         escapeIdentifier(const QString &identifier, IdentifierType type) const override;
+    //bool            isIdentifierEscaped(const QString &identifier, IdentifierType type) const override;
 
 private:
-    casswrapper::Session::pointer_t f_session;
-    casswrapper::Batch::pointer_t   f_batch;
-    QString                         f_db;
-
     void                            emitQueryFinishedSignal() const;
+
+    casswrapper::Session::pointer_t f_session = casswrapper::Session::pointer_t();
+    casswrapper::Batch::pointer_t   f_batch = casswrapper::Batch::pointer_t();
+    QString                         f_db = QString();
 };
 
 QT_END_NAMESPACE

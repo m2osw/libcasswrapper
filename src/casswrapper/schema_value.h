@@ -59,7 +59,8 @@ namespace schema
 class Value
 {
 public:
-    enum type_t {
+    enum type_t
+    {
         TypeUnknown,
         TypeVariant,
         TypeMap,
@@ -94,12 +95,11 @@ private:
     void                parseTuple   ( const value& val );
     void                parseVariant ( const value& val );
 
-    type_t              f_type;
-    QVariant            f_variant;
-    list_t              f_list;
-    map_t               f_map;
-
-    mutable QString     f_stringOutput;
+    type_t              f_type         = type_t::TypeUnknown;
+    QVariant            f_variant      = QVariant();
+    list_t              f_list         = list_t();
+    map_t               f_map          = map_t();
+    mutable QString     f_stringOutput = QString();
 };
 
 

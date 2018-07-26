@@ -73,10 +73,10 @@ namespace casswrapper
 
 struct data
 {
-    std::unique_ptr<cluster>    f_cluster;
-    std::unique_ptr<session>    f_session;
-    std::unique_ptr<ssl>        f_ssl;
-    std::unique_ptr<future>     f_connection;
+    std::unique_ptr<cluster>    f_cluster    = std::unique_ptr<cluster>();
+    std::unique_ptr<session>    f_session    = std::unique_ptr<session>();
+    std::unique_ptr<ssl>        f_ssl        = std::unique_ptr<ssl>();
+    std::unique_ptr<future>     f_connection = std::unique_ptr<future>();
 };
 
 

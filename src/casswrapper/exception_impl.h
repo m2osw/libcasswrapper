@@ -62,13 +62,13 @@ public:
     virtual const char*     what() const throw() override;
 
 private:
-    CassError   f_code;
-    QString     f_error;
-    QString     f_errmsg;
-    QString     f_message;
-    std::string f_what;
+    void                    init();
 
-    void init();
+    CassError   f_code    = CassError();
+    QString     f_error   = QString();
+    QString     f_errmsg  = QString();
+    QString     f_message = QString();
+    std::string f_what    = std::string();
 };
 
 

@@ -51,12 +51,20 @@ using namespace casswrapper;
 using namespace schema;
 
 
-QString query_test::f_host = "127.0.0.1";
+namespace
+{
+
+QString g_host = QString("127.0.0.1");
+
+}
+// no name namespace
+
+
 
 query_test::query_test()
 {
     f_session = Session::create();
-    f_session->connect( f_host );
+    f_session->connect( g_host );
     //
     if( !f_session->isConnected() )
     {
@@ -418,7 +426,7 @@ void query_test::qtSqlDriverTest()
     }
 
     QString const database_name("qtcassandra_query_test");
-    db.setHostName( f_host );
+    db.setHostName( g_host );
     db.setDatabaseName(database_name);
     if( !db.open() )
     {
@@ -588,12 +596,12 @@ void query_test::qtSqlDriverTest()
 
 void query_test::set_host( QString const& host )
 {
-    f_host = host;
+    g_host = host;
 }
 
 QString query_test::get_host()
 {
-    return f_host;
+    return g_host;
 }
 
 // vim: ts=4 sw=4 et

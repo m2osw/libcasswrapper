@@ -1,3 +1,9 @@
+libcasswrapper (1.1.3.0~xenial) xenial; urgency=high
+
+  * Made code -Weffc++ compatible.
+
+ -- Alexis Wilke <alexis@m2osw.com>  Wed, 25 Jul 2018 19:30:25 -0800
+
 libcasswrapper (1.1.2.3~xenial) xenial; urgency=high
 
   * Bump version to recompile without the -fsanitizer flags.

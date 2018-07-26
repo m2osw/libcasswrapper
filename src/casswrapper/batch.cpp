@@ -59,6 +59,7 @@ namespace casswrapper
  * \sa batch
  */
 Batch::Batch()
+    : f_batch(std::unique_ptr<batch>()) // -Weffc++ requires this definition
 {
 }
 
