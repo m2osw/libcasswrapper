@@ -1,6 +1,6 @@
 /*
  * Text:
- *      src/session.cpp
+ *      src/casswrapper/session.cpp
  *
  * Description:
  *      Handling of the CQL interface.

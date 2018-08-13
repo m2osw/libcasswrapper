@@ -1,6 +1,6 @@
 /*
  * Text:
- *      src/casswrapper_impl.h
+ *      src/casswrapper/casswrapper_impl.h
  *
  * Description:
  *      Handling of the CQL interface.
@@ -343,6 +343,7 @@ public:
         void operator()(CassRow* p) const;
     };
 
+    row();
     row( CassRow*       );
     row( CassRow const* );
 

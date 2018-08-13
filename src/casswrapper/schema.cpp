@@ -1,6 +1,6 @@
 /*
  * Text:
- *      src/schema.cpp
+ *      src/casswrapper/schema.cpp
  *
  * Description:
  *      Database schema metadata implementation.
@@ -245,6 +245,15 @@ const TableMeta::map_t& KeyspaceMeta::getTables() const
 }
 
 
+TableMeta::pointer_t KeyspaceMeta::createTable(QString const & table_name)
+{
+    table_meta tm(nullptr);
+    TableMeta::pointer_t new_table(new TableMeta(tm));
+    f_tables[table_name] = new_table;
+    return new_table;
+}
+
+
 /** \brief Transform a KeyspaceMeta in a blob.
  *
  * This function transforms a KeyspaceMeta object into a blob that can be
@@ -331,7 +340,6 @@ TableMeta::TableMeta( const cassvalue::Decoder& decoder )
 }
 
 TableMeta::TableMeta( table_meta const& tm )
-    //: f_table_meta(tm)
     : f_name(tm.get_name())
 {
     iterator table_fields_iter( tm.get_fields() );

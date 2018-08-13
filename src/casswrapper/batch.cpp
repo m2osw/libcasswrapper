@@ -1,6 +1,6 @@
 /*
  * Text:
- *      src/batch.cpp
+ *      src/casswrapper/batch.cpp
  *
  * Description:
  *      Wrapper of the batch CQL interface.

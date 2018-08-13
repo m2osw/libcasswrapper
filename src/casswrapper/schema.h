@@ -177,6 +177,7 @@ public:
     Value&                          operator [] ( const QString& name );
 
     const TableMeta::map_t&         getTables() const;
+    TableMeta::pointer_t            createTable(QString const & table_name);
 
     void                            encodeKeyspaceMeta(cassvalue::Encoder& encoded) const;
 

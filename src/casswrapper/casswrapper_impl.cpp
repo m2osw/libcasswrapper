@@ -1,6 +1,6 @@
 /*
  * Text:
- *      src/casswrapper_impl.cpp
+ *      src/casswrapper/casswrapper_impl.cpp
  *
  * Description:
  *      Handling of the CQL interface.
@@ -475,32 +475,52 @@ void iterator::deleter_t::operator()(CassIterator* p) const
 
 bool iterator::next() const
 {
-    return cass_iterator_next( f_ptr.get() ) == cass_true? true: false;
+    if(f_ptr == nullptr)
+    {
+        return false;
+    }
+    return cass_iterator_next( f_ptr.get() ) == cass_true;
 }
 
 
 value iterator::get_map_key() const
 {
+    if(f_ptr == nullptr)
+    {
+        return value(nullptr);
+    }
     return value( const_cast<CassValue*>(cass_iterator_get_map_key(f_ptr.get())) );
 }
 
 
 value iterator::get_map_value() const
 {
+    if(f_ptr == nullptr)
+    {
+        return value(nullptr);
+    }
     return value( const_cast<CassValue*>(cass_iterator_get_map_value(f_ptr.get())) );
 }
 
 
 value iterator::get_value() const
 {
+    if(f_ptr == nullptr)
+    {
+        return value(nullptr);
+    }
     return value( const_cast<CassValue*>(cass_iterator_get_value(f_ptr.get())) );
 }
 
 
 QString iterator::get_meta_field_name() const
 {
-    const char * name;
-    size_t len;
+    if(f_ptr == nullptr)
+    {
+        return QString();
+    }
+    const char * name(nullptr);
+    size_t len(0);
     const CassError rc = cass_iterator_get_meta_field_name( f_ptr.get(), &name, &len );
     if( rc != CASS_OK )
     {
@@ -513,30 +533,50 @@ QString iterator::get_meta_field_name() const
 
 value iterator::get_meta_field_value() const
 {
+    if(f_ptr == nullptr)
+    {
+        return value(nullptr);
+    }
     return value( const_cast<CassValue*>(cass_iterator_get_meta_field_value( f_ptr.get() )) );
 }
 
 
 row iterator::get_row() const
 {
+    if(f_ptr == nullptr)
+    {
+        return row();
+    }
     return row( const_cast<CassRow*>(cass_iterator_get_row(f_ptr.get())) );
 }
 
 
 keyspace_meta iterator::get_keyspace_meta() const
 {
+    if(f_ptr == nullptr)
+    {
+        return keyspace_meta(nullptr);
+    }
     return keyspace_meta( const_cast<CassKeyspaceMeta*>(cass_iterator_get_keyspace_meta(f_ptr.get())) );
 }
 
 
 table_meta iterator::get_table_meta() const
 {
+    if(f_ptr == nullptr)
+    {
+        return table_meta(nullptr);
+    }
     return table_meta( const_cast<CassTableMeta*>(cass_iterator_get_table_meta(f_ptr.get())) );
 }
 
 
 column_meta iterator::get_column_meta() const
 {
+    if(f_ptr == nullptr)
+    {
+        return column_meta(nullptr);
+    }
     return column_meta( const_cast<CassColumnMeta*>(cass_iterator_get_column_meta(f_ptr.get())) );
 }
 
@@ -680,6 +720,11 @@ row result::get_first_row() const
 //===============================================================================
 // row
 //
+row::row()
+{
+}
+
+
 row::row( CassRow* p )
     : f_ptr( p, deleter_t() )
 {
@@ -989,20 +1034,32 @@ void table_meta::deleter_t::operator()( CassTableMeta* ) const
 
 iterator table_meta::get_fields() const
 {
+    if(f_ptr == nullptr)
+    {
+        return iterator(nullptr);
+    }
     return iterator( cass_iterator_fields_from_table_meta( f_ptr.get() ) );
 }
 
 
 iterator table_meta::get_columns() const
 {
+    if(f_ptr == nullptr)
+    {
+        return iterator(nullptr);
+    }
     return iterator( cass_iterator_columns_from_table_meta( f_ptr.get() ) );
 }
 
 
 QString table_meta::get_name() const
 {
-    const char * name;
-    size_t len;
+    if(f_ptr == nullptr)
+    {
+        return QString();
+    }
+    const char * name(nullptr);
+    size_t len(0);
     cass_table_meta_name( f_ptr.get(), &name, &len );
     return QString::fromUtf8( name, len );
 }
@@ -1026,31 +1083,51 @@ void value::deleter_t::operator()(CassValue*) const
 
 iterator value::get_iterator_from_map() const
 {
+    if(f_ptr == nullptr)
+    {
+        return iterator(nullptr);
+    }
     return iterator( cass_iterator_from_map(f_ptr.get()) );
 }
 
 
 iterator value::get_iterator_from_collection() const
 {
+    if(f_ptr == nullptr)
+    {
+        return iterator(nullptr);
+    }
     return iterator( cass_iterator_from_collection(f_ptr.get()) );
 }
 
 
 iterator value::get_iterator_from_tuple() const
 {
+    if(f_ptr == nullptr)
+    {
+        return iterator(nullptr);
+    }
     return iterator( cass_iterator_from_tuple(f_ptr.get()) );
 }
 
 
 CassValueType value::get_type() const
 {
+    if(f_ptr == nullptr)
+    {
+        return CASS_VALUE_TYPE_UNKNOWN;
+    }
     return cass_value_type( f_ptr.get() );
 }
 
 
 QString value::get_string() const
 {
-    const char* str;
+    if(f_ptr == nullptr)
+    {
+        return QString();
+    }
+    const char * str = nullptr;
     size_t len = 0;
     CassError rc = cass_value_get_string( f_ptr.get(), &str, &len );
     if( rc != CASS_OK )
@@ -1063,7 +1140,11 @@ QString value::get_string() const
 
 QByteArray value::get_blob() const
 {
-    const cass_byte_t* buff;
+    if(f_ptr == nullptr)
+    {
+        return QByteArray();
+    }
+    const cass_byte_t * buff = nullptr;
     size_t len = 0;
     CassError rc = cass_value_get_bytes( f_ptr.get(), &buff, &len );
     if( rc != CASS_OK )
@@ -1076,7 +1157,11 @@ QByteArray value::get_blob() const
 
 bool value::get_bool() const
 {
-    cass_bool_t b;
+    if(f_ptr == nullptr)
+    {
+        return false;
+    }
+    cass_bool_t b = cass_false;
     CassError rc = cass_value_get_bool( f_ptr.get(), &b );
     if( rc != CASS_OK )
     {
@@ -1088,7 +1173,11 @@ bool value::get_bool() const
 
 float value::get_float() const
 {
-    cass_float_t f;
+    if(f_ptr == nullptr)
+    {
+        return 0.0f;
+    }
+    cass_float_t f = 0.0f;
     CassError rc = cass_value_get_float( f_ptr.get(), &f );
     if( rc != CASS_OK )
     {
@@ -1100,7 +1189,11 @@ float value::get_float() const
 
 double value::get_double() const
 {
-    cass_double_t d;
+    if(f_ptr == nullptr)
+    {
+        return 0.0;
+    }
+    cass_double_t d = 0.0;
     CassError rc = cass_value_get_double( f_ptr.get(), &d );
     if( rc != CASS_OK )
     {
@@ -1112,7 +1205,11 @@ double value::get_double() const
 
 int8_t value::get_int8() const
 {
-    cass_int8_t i;
+    if(f_ptr == nullptr)
+    {
+        return 0;
+    }
+    cass_int8_t i = 0;
     CassError rc = cass_value_get_int8( f_ptr.get(), &i );
     if( rc != CASS_OK )
     {
@@ -1124,7 +1221,11 @@ int8_t value::get_int8() const
 
 int16_t value::get_int16() const
 {
-    cass_int16_t i;
+    if(f_ptr == nullptr)
+    {
+        return 0;
+    }
+    cass_int16_t i = 0;
     CassError rc = cass_value_get_int16( f_ptr.get(), &i );
     if( rc != CASS_OK )
     {
@@ -1136,7 +1237,11 @@ int16_t value::get_int16() const
 
 int32_t value::get_int32() const
 {
-    cass_int32_t i;
+    if(f_ptr == nullptr)
+    {
+        return 0;
+    }
+    cass_int32_t i = 0;
     CassError rc = cass_value_get_int32( f_ptr.get(), &i );
     if( rc != CASS_OK )
     {
@@ -1148,7 +1253,11 @@ int32_t value::get_int32() const
 
 int64_t value::get_int64() const
 {
-    cass_int64_t i;
+    if(f_ptr == nullptr)
+    {
+        return 0;
+    }
+    cass_int64_t i = 0;
     CassError rc = cass_value_get_int64( f_ptr.get(), &i );
     if( rc != CASS_OK )
     {
@@ -1160,7 +1269,11 @@ int64_t value::get_int64() const
 
 QString value::get_uuid() const
 {
-    CassUuid uuid;
+    if(f_ptr == nullptr)
+    {
+        return 0;
+    }
+    CassUuid uuid = CassUuid();
     CassError rc = cass_value_get_uuid( f_ptr.get(), &uuid );
     if( rc == CASS_OK )
     {
@@ -1175,7 +1288,11 @@ QString value::get_uuid() const
 
 qulonglong value::get_uuid_timestamp() const
 {
-    CassUuid uuid;
+    if(f_ptr == nullptr)
+    {
+        return 0;
+    }
+    CassUuid uuid = CassUuid();
     CassError rc = cass_value_get_uuid( f_ptr.get(), &uuid );
     if( rc == CASS_OK )
     {
@@ -1188,11 +1305,15 @@ qulonglong value::get_uuid_timestamp() const
 
 QString value::get_inet() const
 {
-    CassInet inet;
+    if(f_ptr == nullptr)
+    {
+        return QString();
+    }
+    CassInet inet = CassInet();
     CassError rc = cass_value_get_inet( f_ptr.get(), &inet );
     if( rc == CASS_OK )
     {
-        char str[CASS_UUID_STRING_LENGTH+1];
+        char str[CASS_UUID_STRING_LENGTH + 1];
         cass_inet_string( inet, str );
         return QString(str);
     }
