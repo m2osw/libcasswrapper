@@ -36,8 +36,9 @@
 
 #include "casswrapper/query.h"
 #include "casswrapper/schema.h"
-#include "casswrapper_impl.h"
 #include "casswrapper/qstring_stream.h"
+
+#include "casswrapper_impl.h"
 #include "exception_impl.h"
 
 #include <as2js/json.h>
@@ -669,14 +670,16 @@ bool Query::isReady() const
 {
     lock_t locker(f_mutex);
     auto const & session( f_data->f_sessionFuture );
-    return session && session->is_ready();
+    return session != nullptr
+        && session->is_ready();
 }
 
 
 bool Query::queryActive() const
 {
     lock_t locker(f_mutex);
-    return (f_data->f_queryResult && f_data->f_rowsIterator);
+    return f_data->f_queryResult
+        && f_data->f_rowsIterator;
 }
 
 
