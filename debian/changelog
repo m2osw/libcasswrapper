@@ -1,3 +1,13 @@
+libcasswrapper (1.1.5.0~xenial) xenial; urgency=high
+
+  * Fixed the query message queryFinished(), we must register it so it works.
+  * Fixed the \param, the [in] was in the wrong place.
+  * Fixed the threadQueryFinished() loop so it will work even if the vector
+    changes under our feet.
+  * Various clean ups.
+
+ -- Alexis Wilke <alexis@m2osw.com>  Mon, 13 Aug 2018 04:22:22 -0800
+
 libcasswrapper (1.1.4.0~xenial) xenial; urgency=high
 
   * Added tests to avoid calling cass_...() functions with null pointers.

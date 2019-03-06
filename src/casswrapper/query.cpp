@@ -145,6 +145,8 @@ Query::Query( Session::pointer_t session )
     : f_session( session )
     , f_data(std::make_unique<data>())
 {
+    lock_t locker(f_mutex);
+    qRegisterMetaType<pointer_t>("pointer_t");
 }
 
 
@@ -317,8 +319,8 @@ void Query::setStatementTimestamp()
  * You would pass in the select string above in the query_string parameter,
  * then specify a bind_count of 2.
  *
- * \param query_string[in]  CQL query string
- * \param bind_count[in]    number of parameters to bind
+ * \param[in] query_string  CQL query string
+ * \param[in] bind_count    number of parameters to bind
  * 
  */
 void Query::query( const QString &query_string, const int bind_count )
@@ -381,8 +383,8 @@ void Query::setPagingSize( const int size )
  *
  * This binds a value to the numbered placeholder in the current query.
  *
- * \param id[in]   placeholder number
- * \param value[in] value to bind to the query
+ * \param[in] id   placeholder number
+ * \param[in] value value to bind to the query
  *
  * \sa query()
  */
@@ -403,8 +405,8 @@ void Query::bindByteArray( const QString& id, const QByteArray& value )
  *
  * This binds a QVariant value to the numbered placeholder in the current query.
  *
- * \param id[in]   placeholder number
- * \param value[in] value to bind to the query
+ * \param[in] id   placeholder number
+ * \param[in] value  value to bind to the query
  *
  * \sa query()
  */
@@ -604,7 +606,7 @@ void Query::addToBatch( batch* batch_ptr )
 }
 
 
-void Query::internalStart( const bool block, batch* batch_ptr )
+void Query::internalStart( const bool block, batch * batch_ptr )
 {
     {
         lock_t locker(f_mutex);
@@ -636,7 +638,8 @@ void Query::internalStart( const bool block, batch* batch_ptr )
  * This method assumes that you have called the query() method already, and
  * optionally specified the paging size and any binding values to the query.
  *
- * \param block[in]	if true, then the method blocks while waiting for completion. It does not block if false.
+ * \param[in] block  if true, then the method blocks while waiting for
+ *                   completion. It does not block if false.
  *
  * \sa query(), setPagingSize(), bindVariant(), bindByteArray()
  */
@@ -662,9 +665,9 @@ void Query::start( const bool block )
  * If it has completed, then the result is checked and throws on error.
  * If it was a valid result (CASS_OK), then true is returned
  *
- * /sa nextRow(), nextPage(), query(), getQueryResult()
+ * \sa nextRow(), nextPage(), query(), getQueryResult()
  *
- * /return false if not ready, true otherwise
+ * \return false if not ready, true otherwise
  */
 bool Query::isReady() const
 {
@@ -711,7 +714,7 @@ schema::column_type_t Query::columnType( size_t const index )
  *
  * \note Throws libexcept::exception_t if query failed.
  *
- * /sa isReady(), query()
+ * \sa isReady(), query()
  */
 void Query::getQueryResult()
 {
@@ -908,7 +911,7 @@ static QVariant get_variant_column( casswrapper::value const& val )
 
 /** \brief Get variant column value by position
  *
- * \param id[in] position of column in the result set
+ * \param[in] id  position of column in the result set
  */
 QVariant Query::getVariantColumn( const size_t id ) const
 {
@@ -932,7 +935,7 @@ QVariant Query::getVariantColumn( const size_t id ) const
 
 /** \brief Get variant column value by name
  *
- * \param id[in] name of column in the result set
+ * \param[in] id name of column in the result set
  */
 QVariant Query::getVariantColumn( const QString& id ) const
 {
@@ -943,7 +946,7 @@ QVariant Query::getVariantColumn( const QString& id ) const
 
 /** \brief Get named byte array column value
  *
- * \param name[in] name of column
+ * \param[in] name  name of column
  */
 QByteArray Query::getByteArrayColumn( const char * name ) const
 {
@@ -954,7 +957,7 @@ QByteArray Query::getByteArrayColumn( const char * name ) const
 
 /** \brief Get named byte array column value
  *
- * \param name[in] name of column
+ * \param[in] name  name of column
  */
 QByteArray Query::getByteArrayColumn( const QString& name ) const
 {
@@ -965,7 +968,7 @@ QByteArray Query::getByteArrayColumn( const QString& name ) const
 
 /** \brief Get byte array column value by position
  *
- * \param num[in] position of column in the result set
+ * \param[in] num  position of column in the result set
  */
 QByteArray Query::getByteArrayColumn( const int num ) const
 {
@@ -976,7 +979,7 @@ QByteArray Query::getByteArrayColumn( const int num ) const
 
 /** \brief Get named JSON map column value
  *
- * \param name[in] name of column
+ * \param[in] name  name of column
  */
 Query::string_map_t Query::getJsonMapColumn ( const QString& name ) const
 {
@@ -1002,7 +1005,7 @@ Query::string_map_t Query::getJsonMapColumn ( const QString& name ) const
 
 /** \brief Get JSON map column value by position
  *
- * \param num[in] position of column in the result set
+ * \param[in] num  position of column in the result set
  */
 Query::string_map_t Query::getJsonMapColumn ( const int num ) const
 {
@@ -1028,7 +1031,7 @@ Query::string_map_t Query::getJsonMapColumn ( const int num ) const
 
 /** \brief Get Cassandra map column value from CassValue
  *
- * \param value[in] pointer to Cassandra value
+ * \param[in] value  pointer to Cassandra value
  */
 Query::string_map_t getMapFromValue( const casswrapper::value& value )
 {
@@ -1050,7 +1053,7 @@ Query::string_map_t getMapFromValue( const casswrapper::value& value )
 
 /** \brief Get named Cassandra map column value
  *
- * \param name[in] name of column
+ * \param[in] name  name of column
  */
 Query::string_map_t Query::getMapColumn ( const QString& name ) const
 {
@@ -1061,7 +1064,7 @@ Query::string_map_t Query::getMapColumn ( const QString& name ) const
 
 /** \brief Get Cassandra map column value by position
  *
- * \param num[in] position of column in the result set
+ * \param[in] num  position of column in the result set
  */
 Query::string_map_t Query::getMapColumn ( const int num ) const
 {
@@ -1070,7 +1073,7 @@ Query::string_map_t Query::getMapColumn ( const int num ) const
 }
 
 
-void Query::addCallback( QueryCallback* callback )
+void Query::addCallback( QueryCallback * callback )
 {
     lock_t locker(f_mutex);
     removeCallback( callback );
@@ -1078,7 +1081,7 @@ void Query::addCallback( QueryCallback* callback )
 }
 
 
-void Query::removeCallback( QueryCallback* callback )
+void Query::removeCallback( QueryCallback * callback )
 {
     lock_t locker(f_mutex);
     auto iter = find_if( std::begin(f_callbackList), std::end(f_callbackList),
@@ -1100,11 +1103,12 @@ void Query::addToPendingList()
     //
     {
         lock_t locker(f_mutex);
-        f_pendingQueryList.push_back( shared_from_this() );
+        f_pendingQueryList.push_back( sharedFromThis() );
     }
+
     f_data->f_sessionFuture->set_callback
-        ( reinterpret_cast<void*>(&Query::queryCallbackFunc)
-          , reinterpret_cast<void*>(f_pendingQueryList.size()-1)
+        ( reinterpret_cast<void *>(&Query::queryCallbackFunc)
+        , reinterpret_cast<void *>(f_pendingQueryList.size() - 1)
         );
 }
 
@@ -1117,12 +1121,12 @@ void Query::removeFromPendingList()
     // Remove this pointer from the list
     //
     f_pendingQueryList.erase(
-            std::remove_if(
+                std::remove_if(
                       f_pendingQueryList.begin()
                     , f_pendingQueryList.end()
                     , [&](auto const & iter)
                       {
-                          return iter.get() == this;
+                          return iter.data() == this;
                       }
                     )
               , f_pendingQueryList.end());
@@ -1145,12 +1149,12 @@ void Query::removeFromPendingList()
 }
 
 
-void Query::queryCallbackFunc( void* f, void *data )
+void Query::queryCallbackFunc( void *f, void *data )
 {
     Query::pointer_t   this_query;
     {
         lock_t locker(f_mutex);
-        const CassFuture*   this_future( reinterpret_cast<const CassFuture*>(f) );
+        const CassFuture *  this_future( reinterpret_cast<const CassFuture *>(f) );
         size_t const        index( reinterpret_cast<size_t>(data) );
         auto                iter( Query::f_pendingQueryList.begin() + index );
         this_query = *iter;
@@ -1162,7 +1166,7 @@ void Query::queryCallbackFunc( void* f, void *data )
         }
     }
 
-    Q_ASSERT(this_query.get());
+    Q_ASSERT(this_query.data());
     this_query->threadQueryFinished();
 }
 
@@ -1170,22 +1174,28 @@ void Query::queryCallbackFunc( void* f, void *data )
 void Query::threadQueryFinished()
 {
     f_mutex.lock();
-    for( auto callback : f_callbackList )
+    callback_list_t const callback_list(f_callbackList);
+    f_mutex.unlock();
+
+    // Execute the callbacks without the lock to avoid deadlocks...
+    //
+    // BUG: at this time the callbacks are bare pointers so the
+    //      following CAN BREAK if a callback removes another callback
+    //      instead of just itself
+    //
+    for(auto callback : callback_list)
     {
-        if( callback )
+        if(callback)
         {
-            // Avoid deadlock...
-            f_mutex.unlock();
             callback->threadFinished();
         }
     }
-    f_mutex.unlock();
 
     // This comes from the background thread created by the Cassandra driver
     // However, when Qt5 emits it, it is properly marshalled into the
     // main thread (when using the GUI, this would be the GUI thread).
     //
-    emit queryFinished( shared_from_this() );
+    emit queryFinished( sharedFromThis() );
 }
 
 

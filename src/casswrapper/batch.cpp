@@ -100,7 +100,7 @@ void Batch::run( bool const block )
     //
     if( f_queryList.empty() )
     {
-        throw libexcept::exception_t( "Batch::start() need at least one query!" );
+        throw libexcept::exception_t( "Batch::start() needs at least one query!" );
     }
 
     for( auto q : f_queryList )

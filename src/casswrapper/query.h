@@ -49,6 +49,8 @@
 #include "casswrapper/schema.h"
 #include "casswrapper/session.h"
 
+
+
 namespace casswrapper
 {
 
@@ -66,6 +68,8 @@ public:
 };
 
 
+
+
 // this class has two problems with -Weffc++:
 //   1. the std::enable_shared_from_this<>() which does not have a virtual
 //      destructor (as expected)
@@ -77,7 +81,7 @@ public:
 #pragma GCC diagnostic ignored "-Wnon-virtual-dtor"
 class Query
     : public QObject
-    , public std::enable_shared_from_this<Query>
+    , public QEnableSharedFromThis<Query>
 {
     Q_OBJECT
 
@@ -95,15 +99,22 @@ public:
         level_three
     };
 
-    typedef std::shared_ptr<Query>              pointer_t;
-    typedef std::map<std::string,std::string>   string_map_t;
+    // somehow the registration of pointer_t when it's a shared_ptr<> failed
+    // and Q_DECLARE_SMART_POINTER_METATYPE(std::shared_ptr) did not help
+    // however, it could be that I missed the "pointer_t" string in the
+    // qRegisterMetaType() call...
+    //
+    //typedef std::shared_ptr<Query>              pointer_t;
 
-    virtual             ~Query() override;
+    typedef QSharedPointer<Query>               pointer_t;
+    typedef std::map<std::string, std::string>  string_map_t;
 
-    static pointer_t    create( Session::pointer_t session );
+    virtual             ~Query              () override;
 
-    void                addCallback    ( QueryCallback* callback );
-    void                removeCallback ( QueryCallback* callback );
+    static pointer_t    create              ( Session::pointer_t session );
+
+    void                addCallback         ( QueryCallback * callback );
+    void                removeCallback      ( QueryCallback * callback );
 
     Session::pointer_t  getSession          () const;
 
@@ -160,21 +171,21 @@ private:
 
     typedef std::vector<pointer_t>                  pointer_list_t;
     typedef std::lock_guard<std::recursive_mutex>   lock_t;
-    typedef std::vector<QueryCallback*>             callback_list_t;
+    typedef std::vector<QueryCallback *>            callback_list_t;
 
-                        Query( Session::pointer_t session );
+                        Query                   ( Session::pointer_t session );
 
-    void                addToBatch              ( batch* batch_ptr );
+    void                addToBatch              ( batch * batch_ptr );
     void                setStatementConsistency ();
     void                setStatementTimestamp   ();
     void                throwIfError            ( const QString& msg );
-    void                internalStart           ( const bool block, batch* batch_ptr = nullptr );
+    void                internalStart           ( const bool block, batch * batch_ptr = nullptr );
 
     void                getQueryResult          ();
     casswrapper::value  getColumnValue          ( const size_t   id ) const;
     casswrapper::value  getColumnValue          ( const QString& id ) const;
 
-    static void         queryCallbackFunc       ( void* future, void *data );
+    static void         queryCallbackFunc       ( void * future, void * data );
     void                addToPendingList        ();
     void                removeFromPendingList   ();
     void                threadQueryFinished     ();
@@ -206,5 +217,6 @@ private:
 // namespace casswrapper
 
 Q_DECLARE_METATYPE( casswrapper::Query::pointer_t )
+
 
 // vim: ts=4 sw=4 et

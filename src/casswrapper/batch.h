@@ -39,6 +39,9 @@
 #include <vector>
 
 
+#include <QSharedPointer>
+
+
 namespace casswrapper
 {
 
@@ -56,7 +59,7 @@ public:
 
     void            clear();
     bool            isActive() const;
-    void            addQuery( std::shared_ptr<Query> query );
+    void            addQuery( QSharedPointer<Query> query );
     void            run( bool const block = true );
 
 protected:
@@ -65,7 +68,7 @@ protected:
                     Batch();
 
     std::unique_ptr<batch>              f_batch;  // = std::unique_ptr<batch>(); -- batch is not yet defined
-    std::vector<std::shared_ptr<Query>> f_queryList = std::vector<std::shared_ptr<Query>>();
+    std::vector<QSharedPointer<Query>>  f_queryList = std::vector<QSharedPointer<Query>>();
 };
 #pragma GCC diagnostic pop
 

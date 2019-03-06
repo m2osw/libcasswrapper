@@ -96,17 +96,20 @@ void query_model::doQuery( Query::pointer_t q )
 {
     if( f_query )
     {
-        disconnect( f_query.get(), &Query::queryFinished, this, &query_model::onQueryFinished );
+        disconnect( f_query.data(), &Query::queryFinished, this, &query_model::onQueryFinished );
     }
 
     f_rows.clear();
-    while( !f_pendingRows.empty() ) f_pendingRows.pop();
+    while( !f_pendingRows.empty() )
+    {
+        f_pendingRows.pop();
+    }
     f_isMore = true;
 
     try
     {
         f_query = q;
-        connect( f_query.get(), &Query::queryFinished, this, &query_model::onQueryFinished );
+        connect( f_query.data(), &Query::queryFinished, this, &query_model::onQueryFinished );
         f_query->start( false /*don't block*/ );
     }
     catch( const std::exception& except )
@@ -122,7 +125,7 @@ void query_model::clear()
 {
     if( f_query )
     {
-        disconnect( f_query.get(), &Query::queryFinished, this, &query_model::onQueryFinished );
+        disconnect( f_query.data(), &Query::queryFinished, this, &query_model::onQueryFinished );
     }
     f_query.reset();
     f_session.reset();

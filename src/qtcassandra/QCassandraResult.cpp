@@ -34,7 +34,7 @@ QCassandraResult::~QCassandraResult()
 
 QVariant QCassandraResult::handle() const
 {
-    return QVariant( reinterpret_cast<qulonglong>(f_query.get()) );
+    return QVariant( reinterpret_cast<qulonglong>(f_query.data()) );
 }
 
 
