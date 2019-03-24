@@ -68,46 +68,50 @@ class Session
 public:
     typedef std::shared_ptr<Session> pointer_t;
 
-    static timeout_t const       DEFAULT_TIMEOUT = 12 * 1000; // 12s
+    static timeout_t const  DEFAULT_TIMEOUT = 12 * 1000; // 12s
 
-    static pointer_t create();
-    ~Session();
+    static pointer_t        create();
+                            ~Session();
 
-    void connect( const QString& host = "localhost", const int port = 9042, const bool use_ssl = true );
-    void connect( const QStringList& host_list     , const int port = 9042, const bool use_ssl = true );
-    void disconnect();
-    bool isConnected() const;
+    void                    connect( const QString & host = "localhost"
+                                   , const int port = 9042
+                                   , const bool use_ssl = true );
+    void                    connect( const QStringList & host_list
+                                   , const int port = 9042
+                                   , const bool use_ssl = true );
+    void                    disconnect();
+    bool                    isConnected() const;
 
-    QString const& get_keys_path() const;
-    void           set_keys_path( QString const& path );
+    QString const &         get_keys_path() const;
+    void                    set_keys_path( QString const& path );
 
-    void           add_ssl_trusted_cert( const QString& cert     );
-    void           add_ssl_cert_file   ( const QString& filename );
+    void                    add_ssl_trusted_cert( const QString& cert     );
+    void                    add_ssl_cert_file   ( const QString& filename );
 
-    cluster getCluster()    const;
-    session getSession()    const;
-    future  getConnection() const;
+    cluster                 getCluster()    const;
+    session                 getSession()    const;
+    future                  getConnection() const;
 
-    timeout_t timeout() const;
-    timeout_t setTimeout(timeout_t timeout_ms);
+    timeout_t               timeout() const;
+    timeout_t               setTimeout(timeout_t timeout_ms);
 
-    uint32_t highWaterMark () const;
-    uint32_t lowWaterMark  () const;
-    void setHighWaterMark  ( uint32_t val );
-    void setLowWaterMark   ( uint32_t val );
+    uint32_t                highWaterMark () const;
+    uint32_t                lowWaterMark  () const;
+    void                    setHighWaterMark  ( uint32_t val );
+    void                    setLowWaterMark   ( uint32_t val );
 
 private:
-    Session();
+                            Session();
 
-    void reset_ssl_keys();
-    void add_ssl_keys();
+    void                    reset_ssl_keys();
+    void                    add_ssl_keys();
 
-    std::unique_ptr<data> f_data;
+    std::unique_ptr<data>   f_data;
     //
-    timeout_t f_timeout         = DEFAULT_TIMEOUT;                         // 12s
-    uint32_t  f_high_water_mark = 65536;
-    uint32_t  f_low_water_mark  = 0;
-    QString   f_keys_path       = QString("/var/lib/snapwebsites/cassandra-keys/");
+    timeout_t               f_timeout         = DEFAULT_TIMEOUT;                         // 12s
+    uint32_t                f_high_water_mark = 65536;
+    uint32_t                f_low_water_mark  = 0;
+    QString                 f_keys_path       = QString("/var/lib/snapwebsites/cassandra-keys/");
 };
 #pragma GCC diagnostic pop
 
