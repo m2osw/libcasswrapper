@@ -153,8 +153,6 @@ public:
     void set_contact_points              ( const QString&  host_list );
     void set_port                        ( const int       port      );
     void set_request_timeout             ( const timeout_t timeout   );
-    void set_write_bytes_low_water_mark  ( const uint32_t  low       );
-    void set_write_bytes_high_water_mark ( const uint32_t  high      );
 
     void reset_ssl() const;
     void set_ssl( const ssl& ) const;

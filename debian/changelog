@@ -1,3 +1,16 @@
+libcasswrapper (1.1.6.0~xenial) xenial; urgency=high
+
+  * SNAP-682 Removed the QtSerliazation and tld dependencies. They are not
+    needed here.
+  * Removed references to the watermark functions since it was deprecated
+    (removed from Cassandra itself, actually!)
+  * Removed references to the DowngradingConsistency retry policy. It will be
+    removed from Cassandra.
+  * Added the CASS_VALUE_TYPE_DURATION type in the parseValue() switch(). But
+    I did not attempt to implement it at this time.
+
+ -- Alexis Wilke <alexis@m2osw.com>  Mon, 22 Apr 2019 01:16:45 -0800
+
 libcasswrapper (1.1.5.0~xenial) xenial; urgency=high
 
   * Fixed the query message queryFinished(), we must register it so it works.

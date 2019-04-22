@@ -95,11 +95,6 @@ public:
     timeout_t               timeout() const;
     timeout_t               setTimeout(timeout_t timeout_ms);
 
-    uint32_t                highWaterMark () const;
-    uint32_t                lowWaterMark  () const;
-    void                    setHighWaterMark  ( uint32_t val );
-    void                    setLowWaterMark   ( uint32_t val );
-
 private:
                             Session();
 
@@ -109,8 +104,6 @@ private:
     std::unique_ptr<data>   f_data;
     //
     timeout_t               f_timeout         = DEFAULT_TIMEOUT;                         // 12s
-    uint32_t                f_high_water_mark = 65536;
-    uint32_t                f_low_water_mark  = 0;
     QString                 f_keys_path       = QString("/var/lib/snapwebsites/cassandra-keys/");
 };
 #pragma GCC diagnostic pop

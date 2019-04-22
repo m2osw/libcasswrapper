@@ -260,6 +260,7 @@ void Value::parseValue( const value& val )
         case CASS_VALUE_TYPE_DECIMAL    :
         case CASS_VALUE_TYPE_LAST_ENTRY :
         case CASS_VALUE_TYPE_UDT        :
+        case CASS_VALUE_TYPE_DURATION   :   // TBD: this seems to be a 3 decimal number (1.2.3) if we need it, fix this
             f_type = TypeUnknown;
             break;
 

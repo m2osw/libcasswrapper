@@ -314,18 +314,6 @@ void cluster::set_request_timeout( const timeout_t timeout )
 }
 
 
-void cluster::set_write_bytes_low_water_mark( const uint32_t low )
-{
-    cass_cluster_set_write_bytes_low_water_mark( f_ptr.get(), low  );
-}
-
-
-void cluster::set_write_bytes_high_water_mark( const uint32_t high )
-{
-    cass_cluster_set_write_bytes_high_water_mark( f_ptr.get(), high );
-}
-
-
 void cluster::reset_ssl() const
 {
     cass_cluster_set_ssl( f_ptr.get(), nullptr );
@@ -627,10 +615,19 @@ retry_policy::retry_policy( type_t const t )
 {
     switch( t )
     {
-    case type_t::Default                : f_ptr.reset( cass_retry_policy_default_new()                 , deleter_t() ); break;
-    case type_t::DowngradingConsistency : f_ptr.reset( cass_retry_policy_downgrading_consistency_new() , deleter_t() ); break;
-    case type_t::FallThrough            : f_ptr.reset( cass_retry_policy_fallthrough_new()             , deleter_t() ); break;
-    case type_t::Logging                : throw libexcept::exception_t("You must use the other constructor for retry_policy. We need a child policy."); break;
+    case type_t::Default:
+        f_ptr.reset(cass_retry_policy_default_new(), deleter_t());
+        break;
+
+    case type_t::FallThrough:
+        f_ptr.reset(cass_retry_policy_fallthrough_new(), deleter_t());
+        break;
+
+    case type_t::DowngradingConsistency: // this one may be completely removed in the future (it is deprecated)
+    case type_t::Logging:
+        throw libexcept::exception_t("The policy type you tried with is not available. You must use the other constructor for retry_policy(). We need a child policy.");
+        break;
+
     }
 }
 

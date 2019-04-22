@@ -11,9 +11,7 @@ Build-Depends: cassandra-cpp-driver-dev (>= 2.5),
     libboost1.49-dev | libboost-dev,
     libcassvalue-dev (>= 1.0.1.269~xenial),
     libexcept-dev (>= 1.0.2.250~xenial),
-    libqtserialization-dev (>= 0.1.20.194~xenial),
     libssl-dev,
-    libtld-dev (>= 1.5.8.39~xenial),
     qtbase5-dev,
     snapcmakemodules (>= 1.0.35.3~xenial)
 Standards-Version: 3.9.4

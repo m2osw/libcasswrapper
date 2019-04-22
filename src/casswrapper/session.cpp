@@ -191,8 +191,6 @@ void Session::connect( const QStringList& host_list, const int port, const bool 
 
     f_data->f_cluster->set_port                        ( port              );
     f_data->f_cluster->set_request_timeout             ( f_timeout         );
-    f_data->f_cluster->set_write_bytes_high_water_mark ( f_high_water_mark );
-    f_data->f_cluster->set_write_bytes_low_water_mark  ( f_low_water_mark  );
 
     // Attach the SSL server trusted certificate if
     // it exists.
@@ -508,40 +506,6 @@ int64_t Session::setTimeout(timeout_t timeout_ms)
         f_data->f_cluster->set_request_timeout( f_timeout );
     }
     return old_timeout;
-}
-
-
-uint32_t Session::highWaterMark() const
-{
-    return f_high_water_mark;
-}
-
-
-uint32_t Session::lowWaterMark() const
-{
-    return f_low_water_mark;
-}
-
-void Session::setHighWaterMark( uint32_t val )
-{
-    f_high_water_mark = val;
-
-    if( f_data->f_cluster )
-    {
-        f_data->f_cluster->set_write_bytes_high_water_mark( f_high_water_mark );
-    }
-}
-
-
-void Session::setLowWaterMark( uint32_t val )
-{
-    f_low_water_mark = val;
-
-    if( f_data->f_cluster )
-    {
-        f_data->f_cluster->set_write_bytes_low_water_mark( f_low_water_mark );
-    }
-    
 }
 
 
