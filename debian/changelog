@@ -1,3 +1,9 @@
+libcasswrapper (1.1.6.2~xenial) xenial; urgency=high
+
+  * Bump version to get a rebuild.
+
+ -- Alexis Wilke <alexis@m2osw.com>  Tue, 23 Apr 2019 00:06:40 -0800
+
 libcasswrapper (1.1.6.1~xenial) xenial; urgency=high
 
   * SNAP-682: Fixed the reference to the Cassandra C++ Driver, it was still
