@@ -1,7 +1,7 @@
 Source: libcasswrapper
 Priority: extra
 Maintainer: R. Douglas Barbieri <doug@dooglio.net>
-Build-Depends: cassandra-cpp-driver-dev (>= 2.5),
+Build-Depends: cassandra-cpp-driver-snap-dev (>= 2.11),
     cmake,
     debhelper,
     doxygen,

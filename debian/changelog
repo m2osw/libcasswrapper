@@ -1,3 +1,10 @@
+libcasswrapper (1.1.6.1~xenial) xenial; urgency=high
+
+  * SNAP-682: Fixed the reference to the Cassandra C++ Driver, it was still
+    the default name (i.e. missing the "-snap-" segment.)
+
+ -- Alexis Wilke <alexis@m2osw.com>  Mon, 22 Apr 2019 20:15:56 -0800
+
 libcasswrapper (1.1.6.0~xenial) xenial; urgency=high
 
   * SNAP-682 Removed the QtSerliazation and tld dependencies. They are not
