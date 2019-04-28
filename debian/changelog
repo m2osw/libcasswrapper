@@ -1,3 +1,9 @@
+libcasswrapper (1.1.6.3~xenial) xenial; urgency=high
+
+  * Bump version to get a rebuild against Cassandra driver 2.12.
+
+ -- Alexis Wilke <alexis@m2osw.com>  Sun, 28 Apr 2019 12:58:35 -0800
+
 libcasswrapper (1.1.6.2~xenial) xenial; urgency=high
 
   * Bump version to get a rebuild.
