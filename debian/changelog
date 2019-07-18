@@ -1,3 +1,9 @@
+libcasswrapper (1.1.6.5~xenial) xenial; urgency=high
+
+  * Bump build number to get a rebuild on launchpad.
+
+ -- Alexis Wilke <alexis@m2osw.com>  Thu, 18 Jul 2019 01:18:03 -0800
+
 libcasswrapper (1.1.6.4~xenial) xenial; urgency=high
 
   * Bump version to get a rebuild on launchpad.
