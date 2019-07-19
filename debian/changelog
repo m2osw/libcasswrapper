@@ -1,3 +1,9 @@
+libcasswrapper (1.1.7.0~xenial) xenial; urgency=high
+
+  * Force the C++ compiler used to C++17 instead of C++11.
+
+ -- Alexis Wilke <alexis@m2osw.com>  Fri, 19 Jul 2019 15:08:09 -0800
+
 libcasswrapper (1.1.6.5~xenial) xenial; urgency=high
 
   * Bump build number to get a rebuild on launchpad.
