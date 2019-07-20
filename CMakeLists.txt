@@ -38,17 +38,6 @@
 cmake_minimum_required(VERSION 3.5)
 project(libcasswrapper)
 
-execute_process(
-    COMMAND
-        ${CMAKE_CXX_COMPILER} -dumpversion
-
-    OUTPUT_VARIABLE
-        GCC_VERSION
-)
-if(GCC_VERSION VERSION_GREATER 7.0)
-    set(CMAKE_CXX_STANDARD 17)
-endif()
-
 set( CMAKE_INCLUDE_CURRENT_DIR ON   )
 set( CMAKE_AUTOMOC             TRUE )
 
