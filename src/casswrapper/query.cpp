@@ -314,7 +314,7 @@ void Query::setStatementTimestamp()
  *
  * For example:
  *
- *  SELECT id, name, description FROM inventory WHERE id = ? AND name = ?;
+ *     SELECT id, name, description FROM inventory WHERE id = ? AND name = ?;
  *
  * You would pass in the select string above in the query_string parameter,
  * then specify a bind_count of 2.
