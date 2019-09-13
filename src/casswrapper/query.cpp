@@ -134,8 +134,9 @@ struct data
 };
 
 
-std::recursive_mutex    Query::f_mutex;
-Query::pointer_list_t   Query::f_pendingQueryList;
+std::recursive_mutex    Query::g_mutex;
+
+
 
 /** \brief Construct a query object and manage the lifetime of the query session.
  *
@@ -145,19 +146,26 @@ Query::Query( Session::pointer_t session )
     : f_session( session )
     , f_data(std::make_unique<data>())
 {
-    lock_t locker(f_mutex);
+    lock_t locker(g_mutex);
     qRegisterMetaType<pointer_t>("pointer_t");
 }
 
 
 /** \brief Destruct a query object.
  *
+ * Make sure everything is properly cleared by calling end().
+ *
+ * \note
+ * I'm not so sure that it's required since everything is already
+ * going to be auto-deleted. The end() call has a lock, though.
+ * but I would imagine that all the calls that require the lock
+ * were done before we get deleted.
+ *
  * \sa end()
  */
 Query::~Query()
 {
     end();
-    removeFromPendingList();
 }
 
 
@@ -183,13 +191,13 @@ Session::pointer_t  Query::getSession() const
  */
 const QString& Query::description() const
 {
-    lock_t locker(f_mutex);
+    lock_t locker(g_mutex);
     return f_description;
 }
 
 void Query::setDescription( const QString& val )
 {
-    lock_t locker(f_mutex);
+    lock_t locker(g_mutex);
     f_description = val;
 }
 
@@ -201,7 +209,7 @@ void Query::setDescription( const QString& val )
  */
 Query::consistency_level_t	Query::consistencyLevel() const
 {
-    lock_t locker(f_mutex);
+    lock_t locker(g_mutex);
     return f_consistencyLevel;
 }
 
@@ -216,7 +224,7 @@ Query::consistency_level_t	Query::consistencyLevel() const
  */
 void Query::setConsistencyLevel( consistency_level_t level )
 {
-    lock_t locker(f_mutex);
+    lock_t locker(g_mutex);
     f_consistencyLevel = level;
     setStatementConsistency();
 }
@@ -224,14 +232,14 @@ void Query::setConsistencyLevel( consistency_level_t level )
 
 int64_t Query::timestamp() const
 {
-    lock_t locker(f_mutex);
+    lock_t locker(g_mutex);
     return f_timestamp;
 }
 
 
 void Query::setTimestamp( int64_t val )
 {
-    lock_t locker(f_mutex);
+    lock_t locker(g_mutex);
     f_timestamp = val;
     setStatementTimestamp();
 }
@@ -241,7 +249,7 @@ void Query::setTimestamp( int64_t val )
  */
 void Query::setStatementConsistency()
 {
-    lock_t locker(f_mutex);
+    lock_t locker(g_mutex);
     if( !f_data->f_queryStmt )
     {
         // Do nothing if the statement hasn't been made yet.
@@ -290,7 +298,7 @@ void Query::setStatementConsistency()
  */
 void Query::setStatementTimestamp()
 {
-    lock_t locker(f_mutex);
+    lock_t locker(g_mutex);
     if( !f_data->f_queryStmt )
     {
         // Do nothing if the statement hasn't been made yet.
@@ -325,7 +333,7 @@ void Query::setStatementTimestamp()
  */
 void Query::query( const QString &query_string, const int bind_count )
 {
-    lock_t locker(f_mutex);
+    lock_t locker(g_mutex);
     f_bindCount = bind_count;
     //
     if( f_bindCount == -1 )
@@ -349,14 +357,14 @@ void Query::query( const QString &query_string, const int bind_count )
  */
 int Query::getBindCount() const
 {
-    lock_t locker(f_mutex);
+    lock_t locker(g_mutex);
     return f_bindCount;
 }
 
 
 int Query::pagingSize() const
 {
-    lock_t locker(f_mutex);
+    lock_t locker(g_mutex);
     return f_pagingSize;
 }
 
@@ -373,7 +381,7 @@ int Query::pagingSize() const
  */
 void Query::setPagingSize( const int size )
 {
-    lock_t locker(f_mutex);
+    lock_t locker(g_mutex);
     f_pagingSize = size;
     f_data->f_queryStmt->set_paging_size( size );
 }
@@ -390,13 +398,13 @@ void Query::setPagingSize( const int size )
  */
 void Query::bindByteArray( const size_t id, const QByteArray& value )
 {
-    lock_t locker(f_mutex);
+    lock_t locker(g_mutex);
     f_data->f_queryStmt->bind_blob( id, value );
 }
 
 void Query::bindByteArray( const QString& id, const QByteArray& value )
 {
-    lock_t locker(f_mutex);
+    lock_t locker(g_mutex);
     f_data->f_queryStmt->bind_blob( id, value );
 }
 
@@ -412,7 +420,7 @@ void Query::bindByteArray( const QString& id, const QByteArray& value )
  */
 void Query::bindVariant( const size_t id, const QVariant& value )
 {
-    lock_t locker(f_mutex);
+    lock_t locker(g_mutex);
     switch( value.type() )
     {
     case QVariant::Bool:      f_data->f_queryStmt->bind_bool   ( id, value.toBool()      ); break;
@@ -430,7 +438,7 @@ void Query::bindVariant( const size_t id, const QVariant& value )
 
 void Query::bindVariant( const QString& id, const QVariant& value )
 {
-    lock_t locker(f_mutex);
+    lock_t locker(g_mutex);
     switch( value.type() )
     {
     case QVariant::Bool:      f_data->f_queryStmt->bind_bool   ( id, value.toBool()      ); break;
@@ -449,7 +457,7 @@ void Query::bindVariant( const QString& id, const QVariant& value )
 
 void Query::bindJsonMap( const size_t num, const string_map_t& value )
 {
-    lock_t locker(f_mutex);
+    lock_t locker(g_mutex);
     std::string data;
     getDataFromJsonMap( value, data );
     f_data->f_queryStmt->bind_string( num, data );
@@ -458,7 +466,7 @@ void Query::bindJsonMap( const size_t num, const string_map_t& value )
 
 void Query::bindJsonMap( const QString& id, const string_map_t& value )
 {
-    lock_t locker(f_mutex);
+    lock_t locker(g_mutex);
     std::string data;
     getDataFromJsonMap( value, data );
     f_data->f_queryStmt->bind_string( id, data );
@@ -467,7 +475,7 @@ void Query::bindJsonMap( const QString& id, const string_map_t& value )
 
 void Query::bindMap( const size_t id, const string_map_t& value )
 {
-    lock_t locker(f_mutex);
+    lock_t locker(g_mutex);
     collection coll( CASS_COLLECTION_TYPE_MAP, value.size() );
     for( const auto& pair : value )
     {
@@ -481,7 +489,7 @@ void Query::bindMap( const size_t id, const string_map_t& value )
 
 void Query::bindMap( const QString& id, const string_map_t& value )
 {
-    lock_t locker(f_mutex);
+    lock_t locker(g_mutex);
     collection coll( CASS_COLLECTION_TYPE_MAP, value.size() );
     for( const auto& pair : value )
     {
@@ -594,7 +602,7 @@ std::cerr << "*** ...pause is over... ***\n";
 
 void Query::addToBatch( batch* batch_ptr )
 {
-    lock_t locker(f_mutex);
+    lock_t locker(g_mutex);
     if( !f_data->f_queryStmt )
     {
         throw libexcept::exception_t( "Query::addToBatch() must be called with an active query statement!" );
@@ -609,7 +617,7 @@ void Query::addToBatch( batch* batch_ptr )
 void Query::internalStart( const bool block, batch * batch_ptr )
 {
     {
-        lock_t locker(f_mutex);
+        lock_t locker(g_mutex);
         f_data->f_sessionFuture = std::make_unique<future>();
 
         if( batch_ptr )
@@ -624,12 +632,16 @@ void Query::internalStart( const bool block, batch * batch_ptr )
 
     if( !block )
     {
+        // setup callback
+        //
         addToPendingList();
     }
-
-    // Get first page
-    //
-    getQueryResult();
+    else
+    {
+        // get first page
+        //
+        getQueryResult();
+    }
 }
 
 
@@ -646,7 +658,7 @@ void Query::internalStart( const bool block, batch * batch_ptr )
 void Query::start( const bool block )
 {
     {
-        lock_t locker(f_mutex);
+        lock_t locker(g_mutex);
         if( !f_data->f_queryStmt )
         {
             throw libexcept::exception_t( "Query::start() called with an unconnected session or no query statement." );
@@ -671,7 +683,7 @@ void Query::start( const bool block )
  */
 bool Query::isReady() const
 {
-    lock_t locker(f_mutex);
+    lock_t locker(g_mutex);
     auto const & session( f_data->f_sessionFuture );
     return session != nullptr
         && session->is_ready();
@@ -680,7 +692,7 @@ bool Query::isReady() const
 
 bool Query::queryActive() const
 {
-    lock_t locker(f_mutex);
+    lock_t locker(g_mutex);
     return f_data->f_queryResult
         && f_data->f_rowsIterator;
 }
@@ -688,7 +700,7 @@ bool Query::queryActive() const
 
 QString Query::columnName( size_t const index )
 {
-    lock_t locker(f_mutex);
+    lock_t locker(g_mutex);
     if( !queryActive() )
     {
         throw libexcept::exception_t( "Query is not active!" );
@@ -700,7 +712,7 @@ QString Query::columnName( size_t const index )
 
 schema::column_type_t Query::columnType( size_t const index )
 {
-    lock_t locker(f_mutex);
+    lock_t locker(g_mutex);
     if( !queryActive() )
     {
         throw libexcept::exception_t( "Query is not active!" );
@@ -718,7 +730,7 @@ schema::column_type_t Query::columnType( size_t const index )
  */
 void Query::getQueryResult()
 {
-    lock_t locker(f_mutex);
+    lock_t locker(g_mutex);
 
     throwIfError( QString("Error in query string:\n%1").arg(f_queryString) );
 
@@ -735,7 +747,8 @@ void Query::getQueryResult()
  */
 void Query::end()
 {
-    lock_t locker(f_mutex);
+    lock_t locker(g_mutex);
+
     f_queryString.clear();
     f_data->f_rowsIterator.reset();
     f_data->f_queryResult.reset();
@@ -755,13 +768,13 @@ void Query::reset()
 
 size_t Query::rowCount() const
 {
-    lock_t locker(f_mutex);
+    lock_t locker(g_mutex);
     return f_data->f_queryResult->get_row_count();
 }
 
 size_t Query::columnCount() const
 {
-    lock_t locker(f_mutex);
+    lock_t locker(g_mutex);
     return f_data->f_queryResult->get_column_count();
 }
 
@@ -776,7 +789,7 @@ size_t Query::columnCount() const
  */
 bool Query::nextRow()
 {
-    lock_t locker(f_mutex);
+    lock_t locker(g_mutex);
     return f_data->f_rowsIterator->next();
 }
 
@@ -792,7 +805,7 @@ bool Query::nextRow()
 bool Query::nextPage( const bool block )
 {
     {
-        lock_t locker(f_mutex);
+        lock_t locker(g_mutex);
         if( !f_data->f_queryResult->has_more_pages() )
         {
             return false;
@@ -818,7 +831,7 @@ bool Query::nextPage( const bool block )
  */
 void Query::throwIfError( const QString& msg )
 {
-    lock_t locker(f_mutex);
+    lock_t locker(g_mutex);
     if( !f_data->f_sessionFuture )
     {
         std::stringstream ss;
@@ -874,14 +887,14 @@ void Query::throwIfError( const QString& msg )
 
 casswrapper::value Query::getColumnValue( const size_t id ) const
 {
-    lock_t locker(f_mutex);
+    lock_t locker(g_mutex);
     return f_data->f_rowsIterator->get_row().get_column( id );
 }
 
 
 casswrapper::value Query::getColumnValue( const QString& id ) const
 {
-    lock_t locker(f_mutex);
+    lock_t locker(g_mutex);
     return f_data->f_rowsIterator->get_row().get_column_by_name( id );
 }
 
@@ -915,7 +928,7 @@ static QVariant get_variant_column( casswrapper::value const& val )
  */
 QVariant Query::getVariantColumn( const size_t id ) const
 {
-    lock_t locker(f_mutex);
+    lock_t locker(g_mutex);
     try
     {
         return get_variant_column( getColumnValue(id) );
@@ -939,7 +952,7 @@ QVariant Query::getVariantColumn( const size_t id ) const
  */
 QVariant Query::getVariantColumn( const QString& id ) const
 {
-    lock_t locker(f_mutex);
+    lock_t locker(g_mutex);
     return get_variant_column( getColumnValue(id) );
 }
 
@@ -950,7 +963,7 @@ QVariant Query::getVariantColumn( const QString& id ) const
  */
 QByteArray Query::getByteArrayColumn( const char * name ) const
 {
-    lock_t locker(f_mutex);
+    lock_t locker(g_mutex);
     return getColumnValue(name).get_blob();
 }
 
@@ -961,7 +974,7 @@ QByteArray Query::getByteArrayColumn( const char * name ) const
  */
 QByteArray Query::getByteArrayColumn( const QString& name ) const
 {
-    lock_t locker(f_mutex);
+    lock_t locker(g_mutex);
     return getColumnValue(name).get_blob();
 }
 
@@ -972,7 +985,7 @@ QByteArray Query::getByteArrayColumn( const QString& name ) const
  */
 QByteArray Query::getByteArrayColumn( const int num ) const
 {
-    lock_t locker(f_mutex);
+    lock_t locker(g_mutex);
     return getColumnValue(num).get_blob();
 }
 
@@ -985,7 +998,7 @@ Query::string_map_t Query::getJsonMapColumn ( const QString& name ) const
 {
     try
     {
-        lock_t locker(f_mutex);
+        lock_t locker(g_mutex);
         string_map_t json_map;
         getMapFromJsonObject( json_map, getColumnValue(name).get_string() );
         return json_map;
@@ -1011,7 +1024,7 @@ Query::string_map_t Query::getJsonMapColumn ( const int num ) const
 {
     try
     {
-        lock_t locker(f_mutex);
+        lock_t locker(g_mutex);
         string_map_t json_map;
         getMapFromJsonObject( json_map, getColumnValue(num).get_string() );
         return json_map;
@@ -1057,7 +1070,7 @@ Query::string_map_t getMapFromValue( const casswrapper::value& value )
  */
 Query::string_map_t Query::getMapColumn ( const QString& name ) const
 {
-    lock_t locker(f_mutex);
+    lock_t locker(g_mutex);
     return getMapFromValue( getColumnValue(name) );
 }
 
@@ -1068,14 +1081,14 @@ Query::string_map_t Query::getMapColumn ( const QString& name ) const
  */
 Query::string_map_t Query::getMapColumn ( const int num ) const
 {
-    lock_t locker(f_mutex);
+    lock_t locker(g_mutex);
     return getMapFromValue( getColumnValue(num) );
 }
 
 
 void Query::addCallback( QueryCallback * callback )
 {
-    lock_t locker(f_mutex);
+    lock_t locker(g_mutex);
     removeCallback( callback );
     f_callbackList.push_back( callback );
 }
@@ -1083,7 +1096,7 @@ void Query::addCallback( QueryCallback * callback )
 
 void Query::removeCallback( QueryCallback * callback )
 {
-    lock_t locker(f_mutex);
+    lock_t locker(g_mutex);
     auto iter = find_if( std::begin(f_callbackList), std::end(f_callbackList),
         [callback]( QueryCallback * cb )
         {
@@ -1102,50 +1115,18 @@ void Query::addToPendingList()
     // This will call back on a background thread
     //
     {
-        lock_t locker(f_mutex);
-        f_pendingQueryList.push_back( sharedFromThis() );
+        lock_t locker(g_mutex);
+
+        // whenever we start a new query in the background we have to lock
+        // ourselves (i.e. shared pointer counter + 1)
+        //
+        f_selves.push_back(sharedFromThis());
     }
 
     f_data->f_sessionFuture->set_callback
         ( reinterpret_cast<void *>(&Query::queryCallbackFunc)
-        , reinterpret_cast<void *>(f_pendingQueryList.size() - 1)
+        , reinterpret_cast<void *>(this)
         );
-}
-
-
-void Query::removeFromPendingList()
-{
-    lock_t locker(f_mutex);
-
-    //
-    // Remove this pointer from the list
-    //
-    f_pendingQueryList.erase(
-                std::remove_if(
-                      f_pendingQueryList.begin()
-                    , f_pendingQueryList.end()
-                    , [&](auto const & iter)
-                      {
-                          return iter.data() == this;
-                      }
-                    )
-              , f_pendingQueryList.end());
-
-    //std::vector<pointer_list_t::iterator> iter_list;
-    //for( auto iter = f_pendingQueryList.begin();
-    //     iter != f_pendingQueryList.end();
-    //     ++iter )
-    //{
-    //    if( iter->get() == this )
-    //    {
-    //        iter_list.push_back(iter);
-    //    }
-    //}
-    ////
-    //for( auto iter : iter_list )
-    //{
-    //    f_pendingQueryList.erase(iter);
-    //}
 }
 
 
@@ -1153,29 +1134,52 @@ void Query::queryCallbackFunc( void *f, void *data )
 {
     Query::pointer_t   this_query;
     {
-        lock_t locker(f_mutex);
+        lock_t locker(g_mutex);
+
         const CassFuture *  this_future( reinterpret_cast<const CassFuture *>(f) );
-        size_t const        index( reinterpret_cast<size_t>(data) );
-        auto                iter( Query::f_pendingQueryList.begin() + index );
-        this_query = *iter;
+        auto                bare( reinterpret_cast<Query *>(data) );
+
+        if(bare->f_selves.empty())
+        {
+            // Query::addToPendingList() -- we are expected to have a one to
+            // one set of calls so this can't happen in normal circumstances
+            //
+            throw libexcept::logic_exception_t("Query Callback/Selves Vector mismatch");
+        }
+
+        this_query = bare->f_selves[0]; // these are all the same, so we can get anyone we want
+        bare->f_selves.pop_back();
+
         //
         if( this_query->f_data->f_sessionFuture->get() != this_future )
         {
-            // Do nothing with this future, because this belongs to a different query
+            // Do nothing with this future, because this belongs to a
+            // previous query (i.e. if you do not wait long enough for
+            // a query to call your callback, the new one will take over
+            // its place!)
+            //
+            // i.e. there isn't a way (that I've seen) to remove a future
+            //      that we setup with a callback; if there is, it was not
+            //      documented where the callback setup can be defined
+            //      (maybe a "future_cancel()" of some sort?) however,
+            //      we would need to be absolutely sure we remove the
+            //      correct future and corresponding f_selves entry
+            //
             return;
         }
     }
 
     Q_ASSERT(this_query.data());
+    this_query->getQueryResult();
     this_query->threadQueryFinished();
 }
 
 
 void Query::threadQueryFinished()
 {
-    f_mutex.lock();
+    g_mutex.lock();
     callback_list_t const callback_list(f_callbackList);
-    f_mutex.unlock();
+    g_mutex.unlock();
 
     // Execute the callbacks without the lock to avoid deadlocks...
     //

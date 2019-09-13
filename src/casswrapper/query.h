@@ -187,28 +187,28 @@ private:
 
     static void         queryCallbackFunc       ( void * future, void * data );
     void                addToPendingList        ();
-    void                removeFromPendingList   ();
     void                threadQueryFinished     ();
 
     // Current query
     //
-    Session::pointer_t           f_session          = Session::pointer_t();
-    QString                      f_description      = QString();
-    QString                      f_queryString      = QString();
+    Session::pointer_t              f_session           = Session::pointer_t();
+    QString                         f_description       = QString();
+    QString                         f_queryString       = QString();
     //
-    std::unique_ptr<data>        f_data;  // = std::unique_ptr<data>(); -- data is an incomplete type at this point
+    std::unique_ptr<data>           f_data;  // = std::unique_ptr<data>(); -- data is an incomplete type at this point
     //
-    consistency_level_t          f_consistencyLevel = consistency_level_t::level_default;
-    int64_t                      f_timestamp        = 0;
-    int64_t                      f_timeout          = 0;
-    int                          f_pagingSize       = -1;
-    int                          f_bindCount        = -1;
+    consistency_level_t             f_consistencyLevel  = consistency_level_t::level_default;
+    int64_t                         f_timestamp         = 0;
+    int64_t                         f_timeout           = 0;
+    int                             f_pagingSize        = -1;
+    int                             f_bindCount         = -1;
 
     // Background thread management
     //
-    static pointer_list_t        f_pendingQueryList;
-    static std::recursive_mutex  f_mutex;
-    callback_list_t              f_callbackList     = callback_list_t();
+    pointer_list_t                  f_selves            = pointer_list_t();
+    callback_list_t                 f_callbackList      = callback_list_t();
+
+    static std::recursive_mutex     g_mutex;
 };
 #pragma GCC diagnostic pop
 
