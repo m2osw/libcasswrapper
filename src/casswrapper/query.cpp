@@ -338,7 +338,7 @@ void Query::query( const QString &query_string, const int bind_count )
     //
     if( f_bindCount == -1 )
     {
-        f_bindCount = query_string.count('?');
+        f_bindCount = query_string.count(QChar('?'));
     }
 
     f_data->f_queryStmt = std::make_unique<statement>( query_string, f_bindCount );

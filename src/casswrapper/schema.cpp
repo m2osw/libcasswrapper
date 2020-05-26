@@ -199,7 +199,7 @@ QString	KeyspaceMeta::getKeyspaceCql() const
 
     keyspace_cql << "  ;\n";
 
-    return keyspace_cql.join('\n');
+    return keyspace_cql.join(QChar('\n'));
 }
 
 
@@ -524,7 +524,7 @@ QString TableMeta::getCqlString( QString const& keyspace_name ) const
     }
 
     table_cql << "  ;\n";
-    return table_cql.join('\n');
+    return table_cql.join(QChar('\n'));
 }
 
 

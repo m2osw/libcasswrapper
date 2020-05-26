@@ -290,7 +290,7 @@ void query_test::batchTest()
         q->bindVariant ( bind_num++, QString("This is test %1.").arg(i) );
 
         QString blob;
-        blob.fill( 'b', 10 );
+        blob.fill( QChar('b'), 10 );
         q->bindByteArray( bind_num++, blob.toUtf8() );
     }
 
@@ -367,7 +367,7 @@ void query_test::largeTableTest()
         q->bindVariant ( bind_num++, QString("This is test %1.").arg(i) );
 
         QString blob;
-        blob.fill( 'b', 10000 );
+        blob.fill( QChar('b'), 10000 );
         q->bindByteArray( bind_num++, blob.toUtf8() );
 
         q->start();
