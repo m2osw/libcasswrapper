@@ -1,3 +1,9 @@
+libcasswrapper (1.1.7.1~xenial) xenial; urgency=high
+
+  * Bump build number to get a rebuild with the new advgetopt.
+
+ -- Alexis Wilke <alexis@m2osw.com>  Fri, 13 Nov 2020 20:14:02 -0800
+
 libcasswrapper (1.1.7.0~xenial) xenial; urgency=high
 
   * Force the C++ compiler used to C++17 instead of C++11.
