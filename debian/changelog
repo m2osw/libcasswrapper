@@ -1,3 +1,9 @@
+libcasswrapper (1.1.8.1~xenial) xenial; urgency=high
+
+  * Fixed the Qt version test.
+
+ -- Alexis Wilke <alexis@m2osw.com>  Mon, 17 May 2021 09:27:19 -0700
+
 libcasswrapper (1.1.8.0~xenial) xenial; urgency=high
 
   * Update so it compiles under 21.04.

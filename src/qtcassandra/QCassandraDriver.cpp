@@ -279,14 +279,15 @@ void QCassandraDriver::emitQueryFinishedSignal() const
 {
     // Kludge because the notification method is not 'const'.
     //
-#if QT_VERSION_MAJOR > 5 || (QT_VERSION_MAJOR == 5 && QT_VERSION_MINOR >= 14)
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
     QVariant data;
     emit const_cast<QCassandraDriver*>(this)->notification(
               "QCassandraDriver::queryFinished()"
             , QSqlDriver::SelfSource
             , data);
 #else
-    emit const_cast<QCassandraDriver*>(this)->notification( "QCassandraDriver::queryFinished()" );
+    emit const_cast<QCassandraDriver*>(this)->notification(
+              "QCassandraDriver::queryFinished()");
 #endif
 }
 
