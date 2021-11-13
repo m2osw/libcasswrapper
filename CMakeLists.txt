@@ -35,7 +35,7 @@
 #      SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.10.2)
 project(libcasswrapper)
 
 set( CMAKE_INCLUDE_CURRENT_DIR ON   )
